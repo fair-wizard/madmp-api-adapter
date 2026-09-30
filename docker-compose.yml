@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: madmp
+      POSTGRES_PASSWORD: madmp
+      POSTGRES_DB: madmp
+    ports:
+      - "5440:5432"
+    volumes:
+      - madmp-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U madmp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  madmp-pgdata:

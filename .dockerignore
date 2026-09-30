@@ -1,0 +1,42 @@
+# Keep the build context small and the image reproducible: everything the
+# runtime does not need, plus anything host-specific that would otherwise
+# leak into the layer or bust the cache.
+
+# Local virtualenv -- the image builds its own with `uv sync --locked`.
+.venv/
+venv/
+
+# VCS and CI
+.git/
+.gitignore
+.github/
+
+# Secrets and local configuration. `.env` must never reach the image;
+# configuration comes from the environment at run time.
+.env
+.env.*
+!.env.example
+
+# Caches and build output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ty_cache/
+dist/
+build/
+*.egg-info/
+
+# Not part of the service: the local store's compose file, the example
+# Wizard deployment (which bundles a knowledge model), and the tests.
+docker-compose.yml
+Dockerfile
+.dockerignore
+example/
+tests/
+
+# Editor and OS noise
+.idea/
+.vscode/
+.DS_Store

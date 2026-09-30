@@ -1,0 +1,71 @@
+services:
+  server:
+    image: datastewardshipwizard/wizard-server:4.33
+    platform: linux/amd64
+    restart: always
+    ports:
+      - 127.0.0.1:3000:3000
+    depends_on:
+      - postgres
+    volumes:
+      - ./application.yml:/app/config/application.yml:ro
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  client:
+    image: datastewardshipwizard/wizard-client:4.33
+    restart: always
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+      API_URL: http://localhost:3000/wizard-api
+
+  postgres:
+    image: postgres:18
+    restart: always
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      POSTGRES_DB: engine-wizard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  # --- maDMP API (option A: next to one Wizard) ---------------------------
+  # Opt-in so `make dev` on the host keeps port 8000:
+  #   docker compose --profile madmp up -d --build
+  madmp-api:
+    profiles: [madmp]
+    build: ../..
+    image: madmp-api:local
+    restart: always
+    ports:
+      - 127.0.0.1:8000:8000
+    environment:
+      # Internal URL: a plain Wizard answers on any Host.
+      MADMP_API_WIZARD_URL: http://server:3000
+      MADMP_API_WIZARD_DEFAULT_KM: dsw:root:2.7.0
+      MADMP_API_DATABASE_URL: postgresql+asyncpg://madmp:madmp@madmp-db:5432/madmp
+    depends_on:
+      madmp-db:
+        condition: service_healthy
+      server:
+        condition: service_started
+
+  madmp-db:
+    profiles: [madmp]
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: madmp
+      POSTGRES_PASSWORD: madmp
+      POSTGRES_DB: madmp
+    volumes:
+      - madmp-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U madmp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  madmp-data:

@@ -1,0 +1,84 @@
+{
+  "dmp": {
+    "title": "Sample maDMP from the console client",
+    "description": "Created by example/madmp-client to exercise POST /dmps.",
+    "created": "2024-01-01T00:00:00+00:00",
+    "modified": "2024-01-01T00:00:00+00:00",
+    "language": "eng",
+    "dmp_id": {
+      "identifier": "https://example.org/dmps/sample",
+      "type": "url"
+    },
+    "contact": {
+      "name": "Albert Einstein",
+      "mbox": "albert.einstein@example.com",
+      "contact_id": {
+        "identifier": "https://orcid.org/0000-0002-1825-0097",
+        "type": "orcid"
+      }
+    },
+    "contributor": [
+      {
+        "name": "Marie Curie",
+        "mbox": "marie.curie@example.com",
+        "role": ["DataCurator", "Researcher"],
+        "contributor_id": {
+          "identifier": "https://orcid.org/0000-0001-2345-6789",
+          "type": "orcid"
+        }
+      }
+    ],
+    "dataset": [
+      {
+        "title": "Sequencing reads",
+        "description": "Raw FASTQ files produced by the sequencer.",
+        "dataset_id": {
+          "identifier": "10.1234/sample-reads",
+          "type": "doi"
+        },
+        "personal_data": "no",
+        "sensitive_data": "no"
+      },
+      {
+        "title": "Analysis outputs",
+        "description": "Derived tables and figures.",
+        "dataset_id": {
+          "identifier": "https://example.org/datasets/analysis",
+          "type": "url"
+        },
+        "personal_data": "no",
+        "sensitive_data": "no"
+      }
+    ],
+    "project": [
+      {
+        "title": "Sample research project",
+        "description": "A short abstract of the research project.",
+        "start": "2024-02-01",
+        "end": "2026-01-31",
+        "funding": [
+          {
+            "funder_id": {
+              "identifier": "https://doi.org/10.13039/501100000780",
+              "type": "url"
+            },
+            "grant_id": {
+              "identifier": "https://example.org/grants/12345",
+              "type": "url"
+            },
+            "funding_status": "granted"
+          }
+        ]
+      }
+    ],
+    "cost": [
+      {
+        "title": "Long-term storage",
+        "description": "Repository fees for five years.",
+        "value": 2500,
+        "currency_code": "EUR"
+      }
+    ],
+    "ethical_issues_exist": "no"
+  }
+}

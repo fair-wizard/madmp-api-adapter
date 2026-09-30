@@ -1,0 +1,9 @@
+# Secret scanning (gitleaks): the default rules, plus one allowlisted file.
+[extend]
+useDefault = true
+
+[allowlist]
+description = """\
+  Public sample secret and RSA key from ds-wizard's dsw-deployment-example, \
+  used only by the local example Wizard. Not real secrets."""
+paths = ['''^example/wizard/application\.yml$''']

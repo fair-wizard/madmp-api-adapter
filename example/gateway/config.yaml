@@ -1,0 +1,13 @@
+gateway:
+  title: DSW Gateway
+  root_path: /gateway
+
+mounts:
+  # Public API: https://<wizard-host>/gateway/madmp/dmps
+  /madmp:
+    module: madmp_api
+    factory: create_app
+    # Optional: instead of MADMP_API_CONFIG_PATH, or to override single
+    # values per mount (kwargs beat env and the YAML file).
+    # kwargs:
+    #   config_path: /app/madmp/config.yaml

@@ -1,0 +1,57 @@
+# maDMP API configuration (all keys optional; defaults shown or noted).
+#
+# Load it with MADMP_API_CONFIG_PATH=/path/config.yaml, `madmp-api migrate
+# --config`, or an engine-gateway mount's `kwargs: {config_path: ...}`.
+# Precedence: gateway kwargs > environment > .env > this file > defaults.
+# Every key also works as an environment variable: upper-cased, prefixed
+# with MADMP_API_, "__" for nesting and JSON for lists/maps, e.g.
+# MADMP_API_WIZARDS__ALLOWED_HOSTS='["*.x.org"]'.
+
+# DSW / FAIR Wizard, without the /wizard-api suffix. In multi mode this is
+# the internal wizard-server that receives the request host as Host.
+wizard_url: http://localhost:3000
+# KM for DMPs created through POST /dmps (package UUID or org:kmId:version).
+wizard_default_km: dsw:root:2.7.0
+
+wizards:
+  # single: one Wizard (plain installation, which ignores Host).
+  # multi:  several Wizard APIs, selected by the public request host, which
+  #         is replayed as Host (how a Wizard with server.cloud.enabled
+  #         routes requests for its host names).
+  mode: single
+  # Headers holding the public host; the first present wins. Put the one
+  # your proxy sets first.
+  host_headers: [x-original-host, x-forwarded-host, host]
+  # multi: glob patterns of Wizard hosts to serve (port included when
+  # non-default); anything else gets 404. Required in multi mode.
+  allowed_hosts: []
+  # multi: call each host's public Wizard API instead of wizard_url + Host.
+  # wizard_url_template: https://{host}
+  # multi: per-host overrides, host glob -> settings; first match wins.
+  overrides: {}
+  #   "special.dsw.example.org":
+  #     wizard_default_km: org.example:special:1.0.0
+  #     default_language: deu
+  #     wizard_url: http://other-dsw:3000     # a separate Wizard, no Host override
+  #     dmp_id_base_url: https://ids.example.org/{host}/dmps
+  #   "*":
+  #     wizard_default_km: dsw:root:2.7.0
+
+# Intermediate store (asyncpg driver). It may share a database with other
+# applications: everything the adapter creates stays in the default schema
+# under table_prefix (tables <prefix>dmp and <prefix>schema_migrations, and
+# their indexes). Lower-case letters, digits and "_", at most 20 chars.
+# The schema is created and migrated automatically, so the database user
+# needs CREATE rights on the default schema.
+database_url: postgresql+asyncpg://madmp:madmp@localhost:5440/madmp
+table_prefix: madmp_
+
+# maDMP synthesis defaults. DMP ids are <dmp_id_base_url>/<project uuid>;
+# unset, the base is derived per request as <scheme>://<host><root_path>/dmps
+# (behind a proxy this relies on X-Forwarded-Proto being trusted).
+default_language: eng
+# dmp_id_base_url: https://dsw.example.org/madmp-api/dmps
+
+# Behaviour tuning.
+list_cache_ttl_seconds: 30
+request_timeout_seconds: 60

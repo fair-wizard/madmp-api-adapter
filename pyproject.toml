@@ -1,0 +1,81 @@
+[project]
+name = "madmp-api"
+version = "0.1.0"
+description = "maDMP API Service"
+readme = "README.md"
+keywords = ["wizard", "madmp", "dmp"]
+license = "MIT"
+authors = [{ name = "Jan Slifka" }, { name = "Marek Suchánek" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: FastAPI",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+]
+requires-python = ">=3.13, <4"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.120,<1.0",
+    "httpx>=0.28.1",
+    "jsonschema>=4.26.0",
+    "pydantic-settings[yaml]>=2.14.2",
+    "sqlalchemy[asyncio]>=2.0",
+    "uvicorn[standard]>=0.30",
+]
+
+[project.scripts]
+madmp-api = "madmp_api.cli:main"
+
+[dependency-groups]
+dev = [
+    "python-dotenv",
+    "ruff",
+    "ty",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "respx>=0.23.1",
+    "pyyaml>=6.0.3",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.25,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = "src"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 80
+indent-width = 4
+include = ["src/**/*.py"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",
+    "DOC",
+    "CPY",
+    "PGH003",
+    "PLR6301",
+]
+preview = true
+
+[tool.ruff.lint.mccabe]
+max-complexity = 16
+
+[tool.ruff.lint.pylint]
+max-args = 8
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"

@@ -1,0 +1,18 @@
+# maDMP API inside the gateway, serving every host name of a Wizard with
+# server.cloud.enabled. Secrets are better passed as env, e.g.
+# MADMP_API_DATABASE_URL, which overrides this file.
+database_url: postgresql+asyncpg://madmp:madmp@madmp-db:5432/madmp
+
+# Internal wizard-server; each call carries the request host as Host.
+wizard_url: http://dsw-server:3000
+wizard_default_km: dsw:root:2.7.0
+
+wizards:
+  mode: multi
+  # The proxy in front of the gateway must pass the public host on, here
+  # as X-Forwarded-Host.
+  host_headers: [x-forwarded-host, host]
+  allowed_hosts: ["*.dsw.example.org"]
+  overrides:
+    "special.dsw.example.org":
+      wizard_default_km: "org.example:special:1.0.0"

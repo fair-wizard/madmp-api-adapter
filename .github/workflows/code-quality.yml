@@ -1,0 +1,114 @@
+name: Code Quality
+
+on:
+  push:
+
+env:
+  PYTHON_VERSION: '3.13'
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: '[setup] Check out repository'
+        uses: actions/checkout@v6
+
+      - name: '[setup] Install uv'
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: '[setup] Set up Python'
+        run: uv python install
+
+      - name: '[app] Install'
+        run: make install
+
+      - name: '[check] Run Ruff'
+        run: make lint
+
+  format:
+    name: Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: '[setup] Check out repository'
+        uses: actions/checkout@v6
+
+      - name: '[setup] Install uv'
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: '[setup] Set up Python'
+        run: uv python install
+
+      - name: '[app] Install'
+        run: make install
+
+      - name: '[check] Run Ruff format check'
+        run: uv run ruff format --check
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: '[setup] Check out repository'
+        uses: actions/checkout@v6
+
+      - name: '[setup] Install uv'
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: '[setup] Set up Python'
+        run: uv python install
+
+      - name: '[app] Install'
+        run: make install
+
+      - name: '[check] Run ty'
+        run: make typecheck
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: madmp
+          POSTGRES_PASSWORD: madmp
+          POSTGRES_DB: madmp
+        ports:
+          - 5440:5432
+        options: >-
+          --health-cmd "pg_isready -U madmp"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: '[setup] Check out repository'
+        uses: actions/checkout@v6
+
+      - name: '[setup] Install uv'
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: '[setup] Set up Python'
+        run: uv python install
+
+      - name: '[app] Install'
+        run: make install
+
+      - name: '[db] Run migrations'
+        run: make migrate
+
+      - name: '[check] Run pytest'
+        run: make test

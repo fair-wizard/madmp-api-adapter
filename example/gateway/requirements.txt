@@ -1,0 +1,3 @@
+uvicorn==0.48.0
+# Pin a released tag (or commit) of the adapter.
+madmp-api @ git+https://github.com/fair-wizard/madmp-api-adapter.git@v0.1.0
